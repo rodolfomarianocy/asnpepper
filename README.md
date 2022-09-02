@@ -1,6 +1,8 @@
 # ASNPepper - Recon in ASN - Tool for searching CIDR's
 ![image](https://user-images.githubusercontent.com/54555784/187352130-b556ae04-5fec-49ac-b49e-a31c01c5139d.png)
 
+This tool is designed to look up CIDR of organization name, to save the results into an output file.
+
 # Usage
 ![image](https://user-images.githubusercontent.com/54555784/188219497-a42b93c4-cab7-41d2-9225-25152529f223.png)
 
