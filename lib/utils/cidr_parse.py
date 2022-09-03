@@ -8,7 +8,7 @@ class Parse():
         if do_print:
             for ip in network:
                 print(ip)
-        return ip
+        return network
 
     @staticmethod
     def extract_cidr_list(cidr_html):

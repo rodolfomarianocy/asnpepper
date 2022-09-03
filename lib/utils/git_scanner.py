@@ -58,9 +58,14 @@ class GitScanner:
 
     def scan(self, urls, schema='http://'):
         for url in urls:
-            #print(url)
             thread = Thread(target=self.req_git, args=(schema + url, True))
             thread.start()
+
+
+    class Wrapper:
+        @staticmethod
+        def scan(urls, schema='http://'):
+            GitScanner().scan(urls)
 
 
 #fake_urls = faker.Faker.gen_fake_urls('')

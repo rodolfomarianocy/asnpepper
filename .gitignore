@@ -6,3 +6,5 @@ asnpepper_linux_ORIGINAL.py
 .gitignore
 .vscode
 output.txt
+.output.txt
+./output.txt
