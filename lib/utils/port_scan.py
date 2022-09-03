@@ -1,7 +1,11 @@
+from ast import List
+import math
 import socket, sys
 from subprocess import call
 from threading import Thread
 from time import sleep
+
+import plogger
 
 class Scanner:
     open_ports = {}
@@ -16,7 +20,7 @@ class Scanner:
 
     def port_open_callback(self, ip, port):
         self.open_ports[str(ip)] = port
-        print("Web Server: " + ip)
+        plogger.PepperLogger.log_success("Web Server: " + ip)
 
 
     def display_open_ips(self):
@@ -34,15 +38,28 @@ class Scanner:
         return
 
 
-    def scan_port(self):
-        for ip in self.ip_list:
-            thread = Thread(target=self.connect_thread, args=(ip, self.port, self.port_open_callback))
+    def connect_multiple_ips_thread(self, ips, port, callback):
+        for ip in ips:
+            self.connect_thread(ip, port, callback)
+
+
+    def scan_port(self, threads=50):
+        if threads > self.ips_range:
+            threads = self.ips_range
+        chunks = int(math.floor((self.ips_range / threads)))
+        chunked_ips = [self.ip_list[i:i + chunks] for i in range(0, len(self.ip_list), chunks)]
+        for c in chunked_ips:
+            thread = Thread(target=self.connect_multiple_ips_thread, args=(c, self.port, self.port_open_callback))
             thread.start()
 
 
-    def scan_port_with_custom_callback(self, callback):
-        for ip in self.ip_list:
-            thread = Thread(target=self.connect_thread, args=(ip, self.port, callback))
+    def scan_port_with_custom_callback(self, callback, threads=50):
+        if threads > self.ips_range:
+            threads = self.ips_range
+        chunks = int(math.floor((self.ips_range / threads)))
+        chunked_ips = [self.ip_list[i:i + chunks] for i in range(0, len(self.ip_list), chunks)]
+        for c in chunked_ips:
+            thread = Thread(target=self.connect_multiple_ips_thread, args=(c, self.port, self.callback))
             thread.start()
 
 
@@ -52,18 +69,18 @@ class Scanner:
             
     class Wrapper:
         @staticmethod
-        def scan_ips(ips, port):
+        def scan_ips(ips, port, threads=50):
             scan = Scanner(ips,port)
-            scan.scan_port()
+            scan.scan_port(threads=threads)
 
 
-        @staticmethod
+        """@staticmethod
         def scan_single_ip(ip, port):
             scan = Scanner()
-            scan.scan_single_ip(ip, port)
+            scan.scan_single_ip(ip, port)"""
 
 
         @staticmethod
-        def scan_ips_with_custom_callback(ips, port, callback):
+        def scan_ips_with_custom_callback(ips, port, callback, threads=50):
             scan = Scanner(ips, port)
-            scan.scan_port_with_custom_callback(callback)
+            scan.scan_port_with_custom_callback(callback, threads)

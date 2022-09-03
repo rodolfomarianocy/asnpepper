@@ -52,18 +52,18 @@ def process_module(network_range):
         network.append(str(i))
 
     if args.test_git:
-        plogger.PepperLogger.log_info('Initializing Git Exposed Scan in CIDRs.')
+        plogger.PepperLogger.log_info('Initializing Git Exposed Scan in CIDRs. Threads: %s, IPs: %s' % (str(args.threads), str(len(network))))
         #git_scanner.GitScanner.Wrapper.scan(network)
 
         def callback_scan(ip, port):
             git_scanner.GitScanner.Wrapper.scan([ip])
 
-        port_scan.Scanner.Wrapper.scan_ips_with_custom_callback(network, 80, callback_scan)
+        port_scan.Scanner.Wrapper.scan_ips_with_custom_callback(network, 80, callback_scan, args.threads)
         pass
 
     if args.test_web is not None:
-        plogger.PepperLogger.log_info('Initializing Web Server Scan in CIDRs.')
-        port_scan.Scanner.Wrapper.scan_ips(network, args.test_web)
+        plogger.PepperLogger.log_info('Initializing Web Server Scan in CIDRs. Threads: %s, IPs: %s' % (str(args.threads), str(len(network))))
+        port_scan.Scanner.Wrapper.scan_ips(network, args.test_web, args.threads)
         pass
 
 
@@ -95,6 +95,8 @@ def init():
     parser.add_argument('-p', '--parse-cidr', dest='parse_cidr', help='convert cidrs to network IPs range', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--test-git', dest='test_git', help='test IPs containing git exposed (in development)', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--test-port', dest='test_web', action='store', type=int, help="test IPs containing port (in development)")
+    parser.add_argument('--threads', dest='threads', action='store', default=1000, type=int, help="specify threads for --test-git or --test-port")
+
 
     args=parser.parse_args()
 

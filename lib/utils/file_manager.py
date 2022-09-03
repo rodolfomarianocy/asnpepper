@@ -3,4 +3,3 @@ class FileManager:
         file = open(name, "a")
         file.write(data + end)
         file.close()
-            
