@@ -1,2 +1,5 @@
 pub.bat
 __pycache__
+pub.py
+asnpepper_linux_ORIGINAL.py
+.gitignore

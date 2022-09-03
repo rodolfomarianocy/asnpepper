@@ -1,11 +1,14 @@
 from selenium import webdriver
-from time import sleep
-import re, argparse
+
+
 from argparse import RawTextHelpFormatter
+from time import sleep
+import re, argparse, cidr_parse
 
 def main(org,name):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
+    
     browser = webdriver.Chrome(options=options)
     res = browser.get("https://bgp.he.net/search?search%5Bsearch%5D="+org+"&commit=Search")
     sleep(1)
@@ -21,12 +24,14 @@ def main(org,name):
     
     for cidr_final,org_name in zip(result,org_list):
         print(cidr_final,org_name)
+        if args.parse_cidr:
+            cidr_parse.Parse.parse_cidr(cidr_final, do_print=True)
         if name:
             output(name,cidr_final)
 
 def output(name,cidr_final):
-	with open(name, "a") as file:
-		file.write(cidr_final+"\n")
+        with open(name, "a") as file:
+                file.write(cidr_final+"\n")
 
 def msg():
     banner = '''
@@ -44,5 +49,7 @@ def msg():
 parser = argparse.ArgumentParser(description=msg(), formatter_class=RawTextHelpFormatter, usage="python asnpepper.py -o org --output output.txt")
 parser.add_argument('-o','--org', dest='org', action='store', type=str, help='insert an organization', required=True)
 parser.add_argument('--output', dest='output_file', action='store', type=str, help="file to save CIDR's")
+parser.add_argument('-p', '--parse-cidr', dest='parse_cidr', help='convert cidrs to network IPs range', default=False, action=argparse.BooleanOptionalAction)
 args=parser.parse_args()
 main(args.org,args.output_file)
+
