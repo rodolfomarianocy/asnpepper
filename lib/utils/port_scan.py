@@ -59,7 +59,7 @@ class Scanner:
         chunks = int(math.floor((self.ips_range / threads)))
         chunked_ips = [self.ip_list[i:i + chunks] for i in range(0, len(self.ip_list), chunks)]
         for c in chunked_ips:
-            thread = Thread(target=self.connect_multiple_ips_thread, args=(c, self.port, self.callback))
+            thread = Thread(target=self.connect_multiple_ips_thread, args=(c, self.port, callback))
             thread.start()
 
 
