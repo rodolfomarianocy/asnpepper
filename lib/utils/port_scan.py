@@ -39,6 +39,13 @@ class Scanner:
             thread = Thread(target=self.connect_thread, args=(ip, self.port, self.port_open_callback))
             thread.start()
 
+
+    def scan_port_with_custom_callback(self, callback):
+        for ip in self.ip_list:
+            thread = Thread(target=self.connect_thread, args=(ip, self.port, callback))
+            thread.start()
+
+
     def scan_single_ip(self, ip, port):
         self.connect_thread(ip, port, self.port_open_callback)
 
@@ -50,10 +57,16 @@ class Scanner:
             scan.scan_port()
 
 
+        @staticmethod
         def scan_single_ip(ip, port):
             scan = Scanner()
             scan.scan_single_ip(ip, port)
 
+
+        @staticmethod
+        def scan_ips_with_custom_callback(ips, port, callback):
+            scan = Scanner(ips, port)
+            scan.scan_port_with_custom_callback(callback)
 
 """
 

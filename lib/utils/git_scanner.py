@@ -5,7 +5,11 @@ import os
 
 sys.path.append( os.path.dirname(os.path.realpath(__file__))+'/../tests')
 
-import faker
+import faker, plogger
+
+
+requests.packages.urllib3.disable_warnings()
+
 
 class GitScanner:
     patterns = [
@@ -39,6 +43,17 @@ class GitScanner:
         
 
     def req_git(self, url, do_print=True):
+        fp_prefix = ''
+        try:
+            test = requests.get(url + '/dsadsaudusadhd78d/', verify=False)
+            if test.status_code != 404 or test.status_code == 200:
+                plogger.PepperLogger.log_warning('Possible False Positive!')
+                fp_prefix = '[FP Code %s] ' % (str(test.status_code))
+                return
+        except:
+            pass
+
+
         for p in self.patterns:
             path = '/' + (p % ('.git'))
             full_path = url + path
@@ -47,7 +62,7 @@ class GitScanner:
                 res = requests.get(full_path)
                 if res.status_code != 404:
                     if do_print:
-                        print(full_path)
+                        print(fp_prefix + full_path)
                     self.git_founds.append(full_path)
             except requests.exceptions.ConnectionError as e:
                 #print(e)

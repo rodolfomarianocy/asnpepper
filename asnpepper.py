@@ -42,7 +42,7 @@ def main(org,name):
 
 
 def can_log_network():
-    return not args.test_git and not args.test_web
+    return not args.test_git and not (args.test_web is not None)
 
 
 isProcessingModule = False
@@ -53,12 +53,17 @@ def process_module(network_range):
 
     if args.test_git:
         plogger.PepperLogger.log_info('Initializing Git Exposed Scan in CIDRs.')
-        git_scanner.GitScanner.Wrapper.scan(network)
+        #git_scanner.GitScanner.Wrapper.scan(network)
+
+        def callback_scan(ip, port):
+            git_scanner.GitScanner.Wrapper.scan([ip])
+
+        port_scan.Scanner.Wrapper.scan_ips_with_custom_callback(network, 80, callback_scan)
         pass
 
-    if args.test_web:
+    if args.test_web is not None:
         plogger.PepperLogger.log_info('Initializing Web Server Scan in CIDRs.')
-        port_scan.Scanner.Wrapper.scan_ips(network, 80)
+        port_scan.Scanner.Wrapper.scan_ips(network, args.test_web)
         pass
 
 
@@ -89,9 +94,16 @@ def init():
     parser.add_argument('--output', dest='output_file', action='store', type=str, help="file to save CIDR's")
     parser.add_argument('-p', '--parse-cidr', dest='parse_cidr', help='convert cidrs to network IPs range', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--test-git', dest='test_git', help='test IPs containing git exposed (in development)', default=False, action=argparse.BooleanOptionalAction)
-    parser.add_argument('--test-web', dest='test_web', help='test IPs containing web server (in development)', default=False, action=argparse.BooleanOptionalAction)
+    #parser.add_argument('--test-web', dest='test_web', help='test IPs containing web server (in development)', default=False, action=argparse.BooleanOptionalAction)
+    parser.add_argument('--test-port', dest='test_web', action='store', type=int, help="test IPs containing port (in development)")
+
     
     args=parser.parse_args()
     main(args.org,args.output_file)
 
 init()
+
+#def callback_scan(ip, port):
+#    git_scanner.GitScanner.Wrapper.scan([ip])
+
+#port_scan.Scanner.Wrapper.scan_ips_with_custom_callback(['10.11.26.112'], 80, callback_scan)
