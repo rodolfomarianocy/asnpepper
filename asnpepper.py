@@ -94,12 +94,16 @@ def init():
     parser.add_argument('--output', dest='output_file', action='store', type=str, help="file to save CIDR's")
     parser.add_argument('-p', '--parse-cidr', dest='parse_cidr', help='convert cidrs to network IPs range', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--test-git', dest='test_git', help='test IPs containing git exposed (in development)', default=False, action=argparse.BooleanOptionalAction)
-    #parser.add_argument('--test-web', dest='test_web', help='test IPs containing web server (in development)', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--test-port', dest='test_web', action='store', type=int, help="test IPs containing port (in development)")
 
-    
     args=parser.parse_args()
+
+    if args.test_web or args.test_git:
+        args.parse_cidr = True
+
     main(args.org,args.output_file)
+
+
 
 init()
 
