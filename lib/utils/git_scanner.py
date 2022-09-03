@@ -1,4 +1,3 @@
-from ast import pattern
 import requests, sys
 from time import sleep
 from threading import Thread
