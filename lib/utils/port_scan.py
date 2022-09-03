@@ -16,7 +16,7 @@ class Scanner:
 
     def port_open_callback(self, ip, port):
         self.open_ports[str(ip)] = port
-        print(ip)
+        print("Web Server: " + ip)
 
 
     def display_open_ips(self):

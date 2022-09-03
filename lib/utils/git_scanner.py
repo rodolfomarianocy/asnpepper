@@ -65,8 +65,3 @@ class GitScanner:
         @staticmethod
         def scan(urls, schema='http://'):
             GitScanner().scan(urls)
-
-
-#fake_urls = faker.Faker.gen_fake_urls('')
-#GitScanner().scan(fake_urls)
-## GitScanner().scan(['10.11.26.40', '10.11.26.40','10.11.26.40','10.11.26.40','10.11.26.40','10.11.26.40','10.11.26.40','10.11.26.40','10.11.26.112','10.11.26.40','10.11.26.40','10.11.26.40','10.11.26.40','10.11.26.40','10.11.26.40',])

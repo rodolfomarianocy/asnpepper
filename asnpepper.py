@@ -17,6 +17,9 @@ def main(org,name):
     cidr_list = cidr_parse.Parse.extract_cidr_list(cidr_html)
     org_list = cidr_parse.Parse.extract_org_list(cidr_html)
     result = []
+
+    full_network = []
+
     for cidr in cidr_list:
         if cidr not in result:
             result.append(cidr)
@@ -24,19 +27,30 @@ def main(org,name):
     for cidr_final,org_name in zip(result,org_list):
         print(cidr_final,org_name)
         if args.parse_cidr:
-            network = cidr_parse.Parse.parse_cidr(cidr_final, do_print=True)
+            network = cidr_parse.Parse.parse_cidr(cidr_final, do_print=can_log_network())
             data = ''
             for i in network:
                 data = data + str(i) + '\n'
-
-            process_module(network)
+                full_network.append(i)
+            
             output(name, data)
         else:
             output(name,cidr_final)
 
+    if not can_log_network():
+        process_module(full_network)
 
 
-def process_module(network):
+def can_log_network():
+    return not args.test_git and not args.test_web
+
+
+isProcessingModule = False
+def process_module(network_range):
+    network = []
+    for i in network_range:
+        network.append(str(i))
+
     if args.test_git:
         plogger.PepperLogger.log_info('Initializing Git Exposed Scan in CIDRs.')
         git_scanner.GitScanner.Wrapper.scan(network)
