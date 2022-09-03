@@ -1,4 +1,6 @@
 class FileManager:
     def write(name, data, end='\n'):
-        with open(name, "a") as file:
-            file.write(data + end)
+        file = open(name, "a")
+        file.write(data + end)
+        file.close()
+            
