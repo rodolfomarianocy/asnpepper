@@ -67,13 +67,3 @@ class Scanner:
         def scan_ips_with_custom_callback(ips, port, callback):
             scan = Scanner(ips, port)
             scan.scan_port_with_custom_callback(callback)
-
-"""
-
-
-Scanner.Wrapper.scan_single_ip('10.11.26.112', 80)
-
-ips_test = gen_fake_ips()
-
-scan = Scanner(ips_test, 80)
-scan.scan_port()"""
