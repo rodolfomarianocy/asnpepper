@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from argparse import RawTextHelpFormatter
-from ast import arg
 from operator import ne
 import re, argparse, sys
 
