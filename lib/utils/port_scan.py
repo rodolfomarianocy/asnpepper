@@ -1,5 +1,6 @@
 from ast import List
 import math
+from posixpath import split
 import socket, sys
 from subprocess import call
 from threading import Thread
@@ -43,11 +44,16 @@ class Scanner:
             self.connect_thread(ip, port, callback)
 
 
+    def split_chunk(self, a, n):
+        k, m = divmod(len(a), n)
+        return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
+
+
     def scan_port(self, threads=50):
         if threads > self.ips_range:
             threads = self.ips_range
-        chunks = int(math.floor((self.ips_range / threads)))
-        chunked_ips = [self.ip_list[i:i + chunks] for i in range(0, len(self.ip_list), chunks)]
+        #chunks = int(math.floor((self.ips_range / threads)))
+        chunked_ips = self.split_chunk(self.ip_list, threads) #[self.ip_list[i:i + chunks] for i in range(0, len(self.ip_list), chunks)]
         for c in chunked_ips:
             thread = Thread(target=self.connect_multiple_ips_thread, args=(c, self.port, self.port_open_callback))
             thread.start()
@@ -56,8 +62,8 @@ class Scanner:
     def scan_port_with_custom_callback(self, callback, threads=50):
         if threads > self.ips_range:
             threads = self.ips_range
-        chunks = int(math.floor((self.ips_range / threads)))
-        chunked_ips = [self.ip_list[i:i + chunks] for i in range(0, len(self.ip_list), chunks)]
+        #chunks = int(math.floor((self.ips_range / threads)))
+        chunked_ips = self.split_chunk(self.ip_list, threads) #[self.ip_list[i:i + chunks] for i in range(0, len(self.ip_list), chunks)]
         for c in chunked_ips:
             thread = Thread(target=self.connect_multiple_ips_thread, args=(c, self.port, callback))
             thread.start()
