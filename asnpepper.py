@@ -3,6 +3,7 @@
 from argparse import RawTextHelpFormatter
 from operator import ne
 import re, argparse, sys
+from xmlrpc.client import boolean
 
 ### include lib/utils, lib/tests ###
 sys.path.insert(1, 'lib/utils')
@@ -56,7 +57,7 @@ def process_module(network_range):
         #git_scanner.GitScanner.Wrapper.scan(network)
 
         def callback_scan(ip, port):
-            git_scanner.GitScanner.Wrapper.scan([ip])
+            git_scanner.GitScanner.Wrapper.scan([ip], schema='http://', show_fp=args.show_fp)
 
         port_scan.Scanner.Wrapper.scan_ips_with_custom_callback(network, 80, callback_scan, args.threads)
         pass
@@ -95,6 +96,7 @@ def init():
     parser.add_argument('-p', '--parse-cidr', dest='parse_cidr', help='convert cidrs to network IPs range', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--test-git', dest='test_git', help='test IPs containing git exposed (in development)', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--test-port', dest='test_web', action='store', type=int, help="test IPs containing port (in development)")
+    parser.add_argument('--show-fp', dest='show_fp', help='show false positive values in git scanner', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--threads', dest='threads', action='store', default=1000, type=int, help="specify threads for --test-git or --test-port")
 
 
