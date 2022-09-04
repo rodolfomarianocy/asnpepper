@@ -1,11 +1,7 @@
-from ast import List
 from posixpath import split
-import socket
+import socket, plogger
 from subprocess import call
 from threading import Thread
-from time import sleep
-
-import plogger
 
 class Scanner:
     open_ports = {}
@@ -46,7 +42,7 @@ class Scanner:
     def scan_port(self, threads=50):
         if threads > self.ips_range:
             threads = self.ips_range
-        chunked_ips = self.split_chunk(self.ip_list, threads) #[self.ip_list[i:i + chunks] for i in range(0, len(self.ip_list), chunks)]
+        chunked_ips = self.split_chunk(self.ip_list, threads)
         for c in chunked_ips:
             thread = Thread(target=self.connect_multiple_ips_thread, args=(c, self.port, self.port_open_callback))
             thread.start()

@@ -2,7 +2,7 @@
 
 from argparse import RawTextHelpFormatter
 from operator import ne
-import re, argparse, sys, threading
+import argparse, sys, threading
 from xmlrpc.client import boolean
 
 ### include lib/utils, lib/tests ###
@@ -17,7 +17,6 @@ def main(org,name):
     cidr_list = cidr_parse.Parse.extract_cidr_list(cidr_html)
     org_list = cidr_parse.Parse.extract_org_list(cidr_html)
     result = []
-
     full_network = []
 
     for cidr in cidr_list:
@@ -43,8 +42,10 @@ def main(org,name):
 def main_verify(org,name,input_list):
     if input_list:
         list = cidr_parse.Parse.input_thread(input_list)
-    for org in list:
-        threading.Thread(target=main,args=(org,name)).start()
+        for org in list:
+            threading.Thread(target=main,args=(org,name)).start()
+    else:
+        main(org,name)
 
 def can_log_network():
     return not args.test_git and not (args.test_web is not None)
@@ -91,13 +92,13 @@ def init():
     global args
     parser = argparse.ArgumentParser(description=msg(), formatter_class=RawTextHelpFormatter, usage="python asnpepper.py -o org --output output.txt")
     parser.add_argument('-o','--org', dest='org', action='store', type=str, help='insert an organization', required=True)
-    parser.add_argument('--output', dest='output_file', action='store', type=str, help="file to save CIDR's")
-    parser.add_argument('-p', '--parse-cidr', dest='parse_cidr', help='convert cidrs to network IPs range', default=False, action=argparse.BooleanOptionalAction)
-    parser.add_argument('--test-git', dest='test_git', help='test IPs containing git exposed (in development)', default=False, action=argparse.BooleanOptionalAction)
-    parser.add_argument('--test-port', dest='test_web', action='store', type=int, help="test IPs containing port (in development)")
-    parser.add_argument('--show-fp', dest='show_fp', help='show false positive values in git scanner', default=False, action=argparse.BooleanOptionalAction)
-    parser.add_argument('--threads', dest='threads', action='store', default=1000, type=int, help="specify threads for --test-git or --test-port")
-    parser.add_argument('--iL','--input-list', dest='input_list', action='store', type=str, help='insert list with organizations')
+    parser.add_argument('-O','--output', dest='output_file', action='store', type=str, help="file to save CIDR's")
+    parser.add_argument('-si', '--show-ip', dest='parse_cidr', help='convert cidrs to network IPs range', default=False, action=argparse.BooleanOptionalAction)
+    parser.add_argument('--test-git', dest='test_git', help='test IPs containing git exposed (in dev)', default=False, action=argparse.BooleanOptionalAction)
+    parser.add_argument('--test-port', dest='test_web', action='store', type=int, help="test IPs containing port (in dev)")
+    parser.add_argument('-sfp', dest='show_fp', help='show false positive in git scanner', default=False, action=argparse.BooleanOptionalAction)
+    parser.add_argument('-t','--threads', dest='threads', action='store', default=1000, type=int, help="Threads for --test-git or --test-port")
+    parser.add_argument('-iL','--input-list', dest='input_list', action='store', type=str, help='insert list with organization names')
 
     args=parser.parse_args()
 
