@@ -5,11 +5,9 @@ import os
 
 sys.path.append( os.path.dirname(os.path.realpath(__file__))+'/../tests')
 
-import faker, plogger
-
+import plogger
 
 requests.packages.urllib3.disable_warnings()
-
 
 class GitScanner:
     patterns = [
@@ -41,7 +39,6 @@ class GitScanner:
     def git_exists_callback(self, url):
         print(url)
         
-
     def req_git(self, url, do_print=True, show_fp=False):
         fp_prefix = ''
         try:
@@ -53,7 +50,6 @@ class GitScanner:
                     return
         except:
             pass
-
 
         for p in self.patterns:
             path = '/' + (p % ('.git'))
@@ -67,13 +63,11 @@ class GitScanner:
             except requests.exceptions.ConnectionError as e:
                 pass
         return
-    
 
     def scan(self, urls, schema='http://', show_fp=False):
         for url in urls:
             thread = Thread(target=self.req_git, args=(schema + url, True, show_fp))
             thread.start()
-
 
     class Wrapper:
         @staticmethod
