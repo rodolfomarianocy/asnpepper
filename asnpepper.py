@@ -2,7 +2,7 @@
 
 from argparse import RawTextHelpFormatter
 from operator import ne
-import re, argparse, sys
+import re, argparse, sys, threading
 from xmlrpc.client import boolean
 
 ### include lib/utils, lib/tests ###
@@ -11,7 +11,6 @@ sys.path.insert(1, 'lib/tests')
 #####################################
 
 import cidr_parse, cidr_getter, git_scanner, port_scan, file_manager, plogger
-
 
 def main(org,name):
     cidr_html = cidr_getter.Getter.get_bgp(org)
@@ -41,10 +40,14 @@ def main(org,name):
     if not can_log_network():
         process_module(full_network)
 
+def main_verify(org,name,input_list):
+    if input_list:
+        list = cidr_parse.Parse.input_thread(input_list)
+    for org in list:
+        threading.Thread(target=main,args=(org,name)).start()
 
 def can_log_network():
     return not args.test_git and not (args.test_web is not None)
-
 
 isProcessingModule = False
 def process_module(network_range):
@@ -54,7 +57,6 @@ def process_module(network_range):
 
     if args.test_git:
         plogger.PepperLogger.log_info('Initializing Git Exposed Scan in CIDRs. Threads: %s, IPs: %s' % (str(args.threads), str(len(network))))
-        #git_scanner.GitScanner.Wrapper.scan(network)
 
         def callback_scan(ip, port):
             git_scanner.GitScanner.Wrapper.scan([ip], schema='http://', show_fp=args.show_fp)
@@ -67,11 +69,9 @@ def process_module(network_range):
         port_scan.Scanner.Wrapper.scan_ips(network, args.test_web, args.threads)
         pass
 
-
 def output(name,cidr_final):
     if name is not None:
         file_manager.FileManager.write(name, cidr_final, end='\n')
-
 
 def msg():
     banner = '''
@@ -87,7 +87,6 @@ def msg():
     return banner
 
 args = None
-
 def init():
     global args
     parser = argparse.ArgumentParser(description=msg(), formatter_class=RawTextHelpFormatter, usage="python asnpepper.py -o org --output output.txt")
@@ -98,20 +97,13 @@ def init():
     parser.add_argument('--test-port', dest='test_web', action='store', type=int, help="test IPs containing port (in development)")
     parser.add_argument('--show-fp', dest='show_fp', help='show false positive values in git scanner', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--threads', dest='threads', action='store', default=1000, type=int, help="specify threads for --test-git or --test-port")
-
+    parser.add_argument('--iL','--input-list', dest='input_list', action='store', type=str, help='insert list with organizations')
 
     args=parser.parse_args()
 
     if args.test_web or args.test_git:
         args.parse_cidr = True
 
-    main(args.org,args.output_file)
-
-
+    main_verify(args.org,args.output_file,args.input_list)
 
 init()
-
-#def callback_scan(ip, port):
-#    git_scanner.GitScanner.Wrapper.scan([ip])
-
-#port_scan.Scanner.Wrapper.scan_ips_with_custom_callback(['10.11.26.112'], 80, callback_scan)
