@@ -1,4 +1,4 @@
-from ipaddress import ip_network, ip_address
+from ipaddress import ip_network
 import re
 
 class Parse():

@@ -1,6 +1,4 @@
-from posixpath import split
 import socket, plogger
-from subprocess import call
 from threading import Thread
 
 class Scanner:
@@ -15,7 +13,7 @@ class Scanner:
 
     def port_open_callback(self, ip, port):
         self.open_ports[str(ip)] = port
-        plogger.PepperLogger.log_success("Web Server: " + ip)
+        plogger.PepperLogger.log_success("Web Server: " + ip+":"+str(port))
 
     def display_open_ips(self):
         for ip,port in self.open_ports.items():
