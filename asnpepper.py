@@ -56,7 +56,7 @@ def process_module(network_range):
     for i in network_range:
         network.append(str(i))
 
-    if args.test_git is not None:
+    if args.test_git:
         plogger.PepperLogger.log_info('Initializing Git Exposed Scan in CIDRs. Threads: %s, IPs: %s' % (str(args.threads), str(len(network))))
 
         def callback_scan(ip, port):
@@ -96,7 +96,7 @@ def init():
     parser.add_argument('-o','--org', dest='org', action='store', type=str, help='insert an organization', required=True)
     parser.add_argument('-O','--output', dest='output_file', action='store', type=str, help="file to save CIDR's")
     parser.add_argument('-si', '--show-ip', dest='parse_cidr', help='convert cidrs to network IPs range', default=False, action=argparse.BooleanOptionalAction)
-    parser.add_argument('--test-git', dest='test_git', action='store', help='test IPs containing git exposed (in dev)', default=False, action=argparse.BooleanOptionalAction)
+    parser.add_argument('--test-git', dest='test_git', help='test IPs containing git exposed (in dev)', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--test-port', dest='test_web', action='store', type=str, help="test IPs containing port (in dev)")
     parser.add_argument('-sfp', dest='show_fp', help='show false positive in git scanner', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('-t','--threads', dest='threads', action='store', default=1000, type=int, help="Threads for --test-git or --test-port")
