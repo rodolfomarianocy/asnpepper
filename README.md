@@ -1,8 +1,7 @@
-This tool is designed to look up CIDR of organization name, to save the results into an output file.
+# Help
+![image](https://user-images.githubusercontent.com/54555784/188523522-3a373814-3c55-4117-ac96-5cae43189e6d.png)
 
-# Usage
-![image](https://user-images.githubusercontent.com/54555784/188219497-a42b93c4-cab7-41d2-9225-25152529f223.png)
-# Usage 
+## Usage
 
 ### View organization CIDRs by searching the ASN's and save in a txt
 ```
