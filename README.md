@@ -29,7 +29,6 @@ python asnpepper.py -o <org> --test-port 80 -t 2000
 ```
 sudo apt install chromium-driver && pip install selenium
 ```
-apt install chrome
 ## Install Windows  
 ```
 pip install selenium webdriver_manager
