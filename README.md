@@ -25,7 +25,7 @@ python asnpepper.py -o <org> --test-port 80,443
 
 ### Fetch Git Exposed on all an organization's ASN IP's on port 80
 ```
-python asnpepper.py -o <org> --test-git
+python asnpepper.py -o <org> --test-git (in development and testing phase)
 ```
 ### It is also possible to set the number of threads to --test-git or --test-port which by default is 1000
 ```
