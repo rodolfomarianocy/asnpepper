@@ -1,4 +1,4 @@
-# ASNPepper - Recon in ASN
+# ASNPepper - Recon in ASN - Extracting CIDR's - Fast and efficient scanning
 
 ## Help
 <img height="300em" src="https://user-images.githubusercontent.com/54555784/188523522-3a373814-3c55-4117-ac96-5cae43189e6d.png" />
