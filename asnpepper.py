@@ -93,7 +93,7 @@ args = None
 def init():
     global args
     parser = argparse.ArgumentParser(description=msg(), formatter_class=RawTextHelpFormatter, usage="python asnpepper.py -o org --output output.txt")
-    parser.add_argument('-o','--org', dest='org', action='store', type=str, help='insert an organization', required=True)
+    parser.add_argument('-o','--org', dest='org', action='store', type=str, help='insert an organization')
     parser.add_argument('-O','--output', dest='output_file', action='store', type=str, help="file to save CIDR's")
     parser.add_argument('-si', '--show-ip', dest='parse_cidr', help='convert cidrs to network IPs range', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--test-git', dest='test_git', help='test IPs containing git exposed (in dev)', default=False, action=argparse.BooleanOptionalAction)
