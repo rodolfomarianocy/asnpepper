@@ -2,7 +2,8 @@
 
 from argparse import RawTextHelpFormatter
 from operator import ne
-import argparse, sys, threading
+from threading import Thread
+import argparse, sys 
 from xmlrpc.client import boolean
 
 ### include lib/utils, lib/tests ###
@@ -43,14 +44,18 @@ def main_verify(org,name,input_list):
     if input_list:
         list = cidr_parse.Parse.input_thread(input_list)
         for org in list:
-            threading.Thread(target=main,args=(org,name)).start()
+            try:
+                Thread(target=main,args=(org,name)).start()
+            except KeyboardInterrupt:
+                print('[!]Execution Canceled ...')
+                exit(0)
+
     else:
         main(org,name)
 
 def can_log_network():
     return not args.test_git and not (args.test_web is not None)
 
-isProcessingModule = False
 def process_module(network_range):
     network = []
     for i in network_range:
@@ -60,11 +65,12 @@ def process_module(network_range):
         plogger.PepperLogger.log_info('Initializing Git Exposed Scan in CIDRs. Threads: %s, IPs: %s' % (str(args.threads), str(len(network))))
 
         def callback_scan(ip, port):
-            git_scanner.GitScanner.Wrapper.scan([ip], schema='http://', show_fp=args.show_fp)
+            git_scanner.GitScanner.Wrapper.scan([ip], ['http://'], show_fp=args.show_fp)
+            git_scanner.GitScanner.Wrapper.scan([ip], ['https://'], show_fp=args.show_fp)
 
         port_scan.Scanner.Wrapper.scan_ips_with_custom_callback(network, 80, callback_scan, args.threads)
         pass
-
+    
     if args.test_web is not None:
         plogger.PepperLogger.log_info('Initializing Web Server Scan in CIDRs. Threads: %s, IPs: %s, Ports: %s' % (str(args.threads), str(len(network)),args.test_web))
         ports = args.test_web.split(",")
@@ -89,7 +95,6 @@ def msg():
 '''
     return banner
 
-args = None
 def init():
     global args
     parser = argparse.ArgumentParser(description=msg(), formatter_class=RawTextHelpFormatter, usage="python asnpepper.py -o org --output output.txt")
@@ -107,6 +112,10 @@ def init():
     if args.test_web or args.test_git:
         args.parse_cidr = True
 
-    main_verify(args.org,args.output_file,args.input_list)
+    if not args.org and not args.input_list:
+        parser.print_help()
+        sys.exit(0)
 
+    main_verify(args.org,args.output_file,args.input_list)
+    
 init()

@@ -54,7 +54,7 @@ class GitScanner:
             path = '/' + (p % ('.git'))
             full_path = url + path
             try:
-                res = requests.get(full_path)
+                res = requests.get(full_path, verify=False)
                 if res.status_code != 404:
                     if do_print:
                         print(fp_prefix + full_path)
@@ -63,12 +63,19 @@ class GitScanner:
                 pass
         return
 
-    def scan(self, urls, schema='http://', show_fp=False):
+    def scan(self, urls, schema, show_fp=False):
+        schema =(''.join(schema))
         for url in urls:
-            thread = Thread(target=self.req_git, args=(schema + url, True, show_fp))
-            thread.start()
+            try:
+                thread = Thread(target=self.req_git, args=(schema + url, True, show_fp)).start()
+            except requests.exceptions.ConnectionError:
+                print('[x] Failed to Connect: '+url)
+                pass
+            except KeyboardInterrupt:
+                print("Execution Canceled...")        
+                exit(0)
 
     class Wrapper:
         @staticmethod
-        def scan(urls, schema='http://', show_fp=False):
-            GitScanner().scan(urls=urls, show_fp=show_fp)
+        def scan(urls, schema, show_fp=False):
+            GitScanner().scan(urls=urls, schema=schema, show_fp=show_fp)
