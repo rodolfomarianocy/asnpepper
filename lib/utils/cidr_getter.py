@@ -5,6 +5,7 @@ class Getter():
     def get_bgp(org):
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
         try:
             browser = webdriver.Chrome(options=options)
         except:

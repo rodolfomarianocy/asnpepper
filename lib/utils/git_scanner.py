@@ -68,9 +68,6 @@ class GitScanner:
         for url in urls:
             try:
                 thread = Thread(target=self.req_git, args=(schema + url, True, show_fp)).start()
-            except requests.exceptions.ConnectionError:
-                print('[x] Failed to Connect: '+url)
-                pass
             except KeyboardInterrupt:
                 print("Execution Canceled...")        
                 exit(0)
