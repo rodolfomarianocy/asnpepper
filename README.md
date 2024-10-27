@@ -40,5 +40,5 @@ sudo apt install chromium-driver && pip install selenium
 pip install selenium webdriver_manager
 ```
 
-Referências:
+References:
 https://rodolfomarianocy.medium.com/recon-em-asns-262a7f7b9297
